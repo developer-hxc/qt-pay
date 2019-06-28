@@ -25,6 +25,7 @@
             "Hxc\\Pay\\": "src/"
         },
         "files": [
+            "src/common.php"
         ]
     }
 }
