@@ -1,9 +1,8 @@
 <?php
 
-namespace HXC\Pay;
+namespace Hxc\Pay;
 
 use Exception;
-use Hxc\Pay\validate\Validate;
 use Symfony\Component\HttpFoundation\Response;
 use think\Config;
 use think\Log;
@@ -51,7 +50,7 @@ trait Pay
         $className = $this->validate;
         $validate = new $className();
         if (!$validate->check($params)) {
-            $this->error($validate->getError);
+            $this->error($validate->getError());
         }
         if ($this->env === 'dev') {//开发环境
             $order = $this->getOrder('dev');

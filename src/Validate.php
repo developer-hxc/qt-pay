@@ -1,6 +1,6 @@
 <?php
 
-namespace Hxc\Pay\validate;
+namespace Hxc\Pay;
 
 class Validate extends \think\Validate
 {
