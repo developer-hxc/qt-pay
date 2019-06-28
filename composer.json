@@ -1,0 +1,30 @@
+{
+    "name": "hxc/qt-pay",
+    "description": "支付",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "韩韩韩",
+            "email": "945120753@qq.com"
+        },
+        {
+            "name": "lvzhao1995",
+            "email": "abc-1.2@qq.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {
+        "php": ">=7.0.0",
+        "ext-json": "*",
+        "ext-mbstring": "*",
+        "topthink/framework": "5.0.*",
+        "yansongda/pay": "^2.7"
+    },
+    "autoload": {
+        "psr-4": {
+            "Hxc\\Pay\\": "src/"
+        },
+        "files": [
+        ]
+    }
+}
