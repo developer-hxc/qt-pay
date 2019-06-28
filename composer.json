@@ -26,5 +26,10 @@
         },
         "files": [
         ]
+    },
+    "scripts": {
+        "post-install-cmd": [
+            "Hxc\\Pay\\Command\\Init::postInstallCmd"
+        ]
     }
 }
