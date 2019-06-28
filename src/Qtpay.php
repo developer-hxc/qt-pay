@@ -3,7 +3,7 @@
 
 namespace app\app\controller;
 
-use HXC\Pay\Pay;
+use Hxc\Pay\Pay;
 use think\Controller;
 
 class Qtpay extends Controller
@@ -17,7 +17,7 @@ class Qtpay extends Controller
     {
         $this->wx_config = [];//自定义微信支付所需参数，优先级高于配置文件
         $this->ali_config = [];//自定义支付宝所需参数，优先级高于配置文件
-        parent::_initialize();
+        $this->getConfig();//读取配置
     }
 
     /**

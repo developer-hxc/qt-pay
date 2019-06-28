@@ -12,7 +12,7 @@ use Yansongda\Pay\Exceptions\InvalidArgumentException;
 
 /**
  * Trait Pay
- * @package HXC\Pay
+ * @package Hxc\Pay
  * @method mixed notify($data, $flag)
  * @method array getOrder($type)
  */
