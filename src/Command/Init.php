@@ -10,7 +10,7 @@ class Init extends Command
 {
     protected function configure()
     {
-        $this->setName('InitPay')->setDescription(mb_convert_encoding('初始化支付模块', 'GBK'));
+        $this->setName('init-pay')->setDescription(mb_convert_encoding('初始化支付模块', 'GBK'));
     }
 
     protected function execute(Input $input, Output $output)
