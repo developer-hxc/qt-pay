@@ -113,13 +113,11 @@ trait Pay
      */
     public function getConfig()
     {
-        $request = Request::instance();
-        $domain = $request->domain();
         $config = Config::get('pay');
         $wx_config = $config['wx'];
         $ali_config = $config['ali'];
-        $wx_config['notify_url'] = $domain . url('WXNotify');
-        $ali_config['notify_url'] = $domain . url('ALiNotify');
+        $wx_config['notify_url'] = url('WXNotify', '', true, true);
+        $ali_config['notify_url'] = url('ALiNotify', '', true, true);
         $this->wx_config = array_merge($wx_config, $this->wx_config);
         $this->ali_config = array_merge($ali_config, $this->ali_config);
         $this->env = $config['env'];
