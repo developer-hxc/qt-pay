@@ -2,6 +2,7 @@
     "name": "hxc/qt-pay",
     "description": "支付",
     "license": "MIT",
+    "type": "qt-extend",
     "authors": [
         {
             "name": "韩韩韩",
@@ -17,15 +18,27 @@
         "php": ">=7.0.0",
         "ext-json": "*",
         "ext-mbstring": "*",
+        "ext-bcmath": "*",
         "topthink/framework": "5.0.*",
         "yansongda/pay": "^2.7"
     },
     "autoload": {
         "psr-4": {
             "Hxc\\Pay\\": "src/"
-        },
-        "files": [
-            "src/common.php"
+        }
+    },
+    "extra": {
+        "qt-extend": [
+            {
+                "type": "config",
+                "from": "src/config.php",
+                "to": "pay"
+            },
+            {
+                "type": "app-controller",
+                "from": "src/Qtpay.php",
+                "to": "Qtpay"
+            }
         ]
     }
 }
