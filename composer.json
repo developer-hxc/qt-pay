@@ -20,7 +20,8 @@
         "ext-mbstring": "*",
         "ext-bcmath": "*",
         "topthink/framework": "5.0.*",
-        "yansongda/pay": "^2.7"
+        "yansongda/pay": "^2.7",
+        "hxc/qt-installer": "^1.0"
     },
     "autoload": {
         "psr-4": {
