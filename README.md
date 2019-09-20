@@ -12,13 +12,7 @@ ThinkPHP 5.0.*
 ```shell
 $ composer require hxc/qt-pay
 ```
-
-## 开始使用
-
-在项目根目录执行以下命令，此命令将在`APP_PATH/app/controller/Qtpay.php`中生成代码，文件已存在则不覆盖。
-```shell
-$ php think init-pay
-```
+安装后将在`APP_PATH/app/controller/Qtpay.php`中生成代码，文件已存在则不覆盖。
 
 ## 配置文件
 
@@ -42,9 +36,31 @@ protected function _initialize()
 -     支付接口：/app/qtpay/pay
       * 参数：
       * 【tpye】：wechat，alipay
-      * 【func】:app（app支付，微信/支付宝哦）,mp（公众号支付，微信）,wap（手机网站支付，微信/支付宝）,mini（小程序支付，微信/支付宝）,web（网页支付，支付宝）
+      * 【func】:app（app支付，微信/支付宝）,mp（公众号支付，微信）,wap（手机网站支付，微信/支付宝）,mini（小程序支付，微信/支付宝）,web（网页支付，支付宝）
 
 **必须实现以下方法**
-- 生成订单的方法：/app/qtpay/getOrder
-- 处理回调的方法：/app/qtpay/notify
+
+- getOrder($type)  
+说明：获取订单参数
+参数：`$type`为`wechat`、`alipay`或`dev`，标记支付方式  
+返回：返回订单所需参数数组，参考支付宝或微信支付文档。  
+
+- notify($data, $flag)  
+说明：处理支付回调  
+参数：`$data`为回调数据；`$flag`为`wx`、`ali`或`dev`，标记支付方式  
+返回：处理成功时必须返回布尔值`true`，其他值认为回调处理失败。支付平台将会按照他们的规则重试。  
+
+同时，提供以下方法
+
+- queryOrder(array/string $order_sn, string $type)  
+说明：查询订单接口  
+参数：`$order` 为 `string` 类型时，请传入系统订单号，对应支付宝或微信中的 `out_trade_no`； `array` 类型时，参数请参考支付宝或微信官方文档。`$type`请传入'wechat'或'alipay'。  
+返回：查询成功，返回 `Yansongda\Supports\Collection` 实例，可以通过 `$colletion->xxx` 或 `$collection['xxx']` 访问服务器返回的数据。  
+异常：`GatewayException` 或 `InvalidSignException`  
+
+- refund(array $order, $type)  
+说明：退款接口  
+参数：`$order` 数组格式，退款参数。`$type`请传入'alipay'或'wechat'。  
+返回：退款成功，返回 `Yansongda\Supports\Collection` 实例，可以通过 `$colletion->xxx` 或 `$collection['xxx']` 访问服务器返回的数据。  
+异常：`GatewayException` 或 `InvalidSignException`
       

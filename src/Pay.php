@@ -7,8 +7,7 @@ use Symfony\Component\HttpFoundation\Response;
 use think\Config;
 use think\Log;
 use think\Request;
-use think\response\Json;
-use Yansongda\Pay\Exceptions\InvalidArgumentException;
+use Yansongda\Supports\Collection;
 
 /**
  * Trait Pay
@@ -18,8 +17,8 @@ use Yansongda\Pay\Exceptions\InvalidArgumentException;
  */
 trait Pay
 {
-    private $ali_config;//支付宝配置
-    private $wx_config;//微信配置
+    private $ali_config = [];//支付宝配置
+    private $wx_config = [];//微信配置
     private $env;//dev开发环境：不走微信/支付宝支付，直接支付成功；production线上环境：走微信/支付宝支付
     private $validate;//验证器
     private $func = [
@@ -42,12 +41,15 @@ trait Pay
     /**
      * 支付
      * @param Request $request
-     * @return Json
+     * @return Response|Collection|void
      */
     public function pay(Request $request)
     {
         $params = $request->only(['type', 'func']);
         $className = $this->validate;
+        /**
+         * @var \think\Validate $validate
+         */
         $validate = new $className();
         if (!$validate->check($params)) {
             $this->error($validate->getError());
@@ -59,8 +61,11 @@ trait Pay
             $func = $this->func[$params['type']][$params['func']];
             $config = ($params['type'] == 'wechat' ? $this->wx_config : $this->ali_config);
             $order = $this->getOrder($params['type']);
+            /**
+             * @var Collection|Response $pay
+             */
             $pay = \Yansongda\Pay\Pay::{$params['type']}($config)->{$func}($order);
-            if ($params['type'] == 'wechat') {
+            if ($pay instanceof Collection) {
                 return $pay;
             } else {
                 return $pay->send();
@@ -70,34 +75,38 @@ trait Pay
 
     /**
      * 微信回调
-     * @return Response
-     * @throws InvalidArgumentException
+     * @return Response|void
      */
     public function WXNotify()
     {
         $pay = \Yansongda\Pay\Pay::wechat($this->wx_config);
         try {
             $data = $pay->verify();
-            $this->notify($data->all(), 'wx');//处理回调
+            $res = $this->notify($data->all(), 'wx');//处理回调
+            if ($res === true) {
+                return $pay->success()->send();
+            }
         } catch (Exception $e) {
             Log::record('微信支付回调异常：' . $e->getMessage());
         }
-        return $pay->success()->send();
     }
 
     /**
      * 支付宝回调
+     * @return Response|void
      */
     public function ALiNotify()
     {
         $pay = \Yansongda\Pay\Pay::alipay($this->ali_config);
         try {
             $data = $pay->verify();
-            $this->notify($data->all(), 'ali');//处理回调
+            $res = $this->notify($data->all(), 'ali');//处理回调
+            if ($res === true) {
+                return $pay->success()->send();
+            }
         } catch (Exception $e) {
             Log::record('支付宝支付回调异常：' . $e->getMessage());
         }
-        return $pay->success()->send();
     }
 
     /**
@@ -124,5 +133,31 @@ trait Pay
         if (!class_exists($this->validate)) {
             $this->validate = Validate::class;
         }
+    }
+
+    /**
+     * 查询订单
+     * @param string $order_sn 商户订单号
+     * @param string $type 支付方式
+     * @return Collection
+     */
+    protected function queryOrder($order_sn, $type)
+    {
+        $config = ($type == 'wechat' ? $this->wx_config : $this->ali_config);
+        $data = \Yansongda\Pay\Pay::{$type}($config)->find($order_sn);
+        return $data;
+    }
+
+    /**
+     * 订单退款
+     * @param array $order 退款参数，详情参考对应支付文档
+     * @param string $type 支付方式
+     * @return Collection
+     */
+    protected function refund(array $order, $type)
+    {
+        $config = ($type == 'wechat' ? $this->wx_config : $this->ali_config);
+        $data = \Yansongda\Pay\Pay::{$type}($config)->refund($order);
+        return $data;
     }
 }
